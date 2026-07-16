@@ -1,0 +1,154 @@
+# ESP32-S3 iPod Haptic Feedback - KiCad Schematic Template
+
+## This is a template/reference for creating the actual KiCad schematic
+## Copy this content as a starting point for your KiCad project
+
+# Component List and Connections
+
+## ESP32-S3 Module (U1)
+# ESP32-S3-WROOM-1 or ESP32-S3-DevKitC-1
+# Power: 3.3V
+# Programming: USB-C connector
+
+## Power Management (U2)
+# AMS1117-3.3 Voltage Regulator
+# Input: 5V from USB-C
+# Output: 3.3V for system
+
+## Display Interface (J1)
+# 9-pin header for ILI9341 display
+# SPI connection to ESP32-S3
+
+## Haptic Driver (U3)
+# DRV2605L Haptic Motor Driver
+# I2C connection to ESP32-S3
+# LRA output connector
+
+## Button Interface (SW1-SW4)
+# 4x Tactile push buttons
+# Pull-up resistors to 3.3V
+
+## Connectors
+# J1: Display connector (9-pin)
+# J2: USB-C programming/power
+# J3: LRA connector (2-pin)
+# J4: Battery connector (optional, 2-pin JST)
+
+# Net Connections
+
+## Power Nets
+# +5V: USB input, regulator input
+# +3V3: System power rail
+# GND: Ground reference
+
+## ESP32-S3 Connections
+# GPIO8  -> TFT_RST
+# GPIO9  -> TFT_DC
+# GPIO10 -> TFT_CS
+# GPIO11 -> SPI_MOSI
+# GPIO12 -> SPI_CLK
+# GPIO13 -> SPI_MISO
+# GPIO14 -> BTN_MENU
+# GPIO15 -> BTN_PLAY
+# GPIO16 -> BTN_PREV
+# GPIO17 -> BTN_NEXT
+# GPIO21 -> I2C_SDA
+# GPIO22 -> I2C_SCL
+
+## Display Connections (J1)
+# Pin 1: GND
+# Pin 2: +3V3 (VCC)
+# Pin 3: +3V3 (LED)
+# Pin 4: TFT_RST
+# Pin 5: TFT_DC
+# Pin 6: TFT_CS
+# Pin 7: SPI_MOSI
+# Pin 8: SPI_CLK
+# Pin 9: SPI_MISO
+
+## DRV2605L Connections (U3)
+# VIN -> +3V3
+# GND -> GND
+# SDA -> I2C_SDA
+# SCL -> I2C_SCL
+# OUT+ -> LRA_P
+# OUT- -> LRA_N
+
+## Button Connections
+# SW1 (Menu): GPIO14 -> Button -> GND, Pull-up to +3V3
+# SW2 (Play): GPIO15 -> Button -> GND, Pull-up to +3V3
+# SW3 (Prev): GPIO16 -> Button -> GND, Pull-up to +3V3
+# SW4 (Next): GPIO17 -> Button -> GND, Pull-up to +3V3
+
+# Component Values
+
+## Resistors (0805 package)
+# R1-R4: 10kΩ (Button pull-ups)
+# R5-R6: 4.7kΩ (I2C pull-ups)
+# R7: 330Ω (Power LED current limiting)
+# R8: 330Ω (Status LED current limiting)
+
+## Capacitors
+# C1: 220μF electrolytic (Regulator input)
+# C2: 100μF electrolytic (Regulator output)
+# C3-C6: 100nF ceramic 0805 (Decoupling)
+# C7-C8: 10μF tantalum 1206 (Power rail filtering)
+
+## LEDs (0805 package)
+# LED1: Green (Power indicator)
+# LED2: Blue (Status indicator)
+
+## Connectors
+# J1: 2.54mm pitch header 1x9 (Display)
+# J2: USB-C connector (Power/Programming)
+# J3: JST PH 2-pin (LRA connection)
+# J4: JST PH 2-pin (Battery, optional)
+
+# PCB Layout Notes
+
+## Layer Stack (2-layer)
+# Top: Components, signals, power traces
+# Bottom: Ground plane, return paths
+
+## Trace Widths
+# Power (3.3V, 5V): 0.5mm (20mil)
+# Signals: 0.2mm (8mil)
+# Ground: Plane + fills
+
+## Component Placement
+# ESP32-S3: Center of board
+# DRV2605L: Near ESP32-S3
+# Buttons: Corners for case mounting
+# Connectors: Board edges
+# Decoupling caps: Near IC power pins
+
+## Design Rules
+# Minimum trace: 0.15mm (6mil)
+# Minimum via: 0.2mm (8mil)
+# Minimum clearance: 0.15mm (6mil)
+
+# Manufacturing Specifications
+# Board size: 100mm x 60mm
+# Thickness: 1.6mm
+# Copper: 1oz (35μm)
+# Solder mask: Green
+# Silkscreen: White
+# Surface finish: HASL or ENIG
+
+# Assembly Notes
+# SMD components on top side
+# Through-hole components (buttons, connectors)
+# Hand assembly or SMT service
+# Reflow profile for lead-free solder
+
+# Testing Points
+# TP1: +3V3 rail
+# TP2: +5V rail  
+# TP3: GND
+# TP4: I2C_SDA
+# TP5: I2C_SCL
+# TP6: SPI_CLK
+# TP7: TFT_CS
+
+# This template provides the foundation for creating the actual KiCad schematic
+# Import this structure into KiCad and add proper symbols and footprints

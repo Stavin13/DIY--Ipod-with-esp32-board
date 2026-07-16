@@ -1,0 +1,18 @@
+# PlatformIO build output and dependencies
+.pio/build/
+.pio/libdeps/
+
+# macOS metadata files
+._*
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# Kiro
+.kiro/
