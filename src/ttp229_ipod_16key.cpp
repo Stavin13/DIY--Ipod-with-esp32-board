@@ -3,13 +3,66 @@ TTP229 16-Key iPod Interface with Advanced Gestures
 Full 16-channel support with iPod Classic-style controls
 */
 
+#include "User_Setup.h"
 #include <TFT_eSPI.h>
+#include <SD.h>
+#include <SPI.h>
 
 TFT_eSPI tft = TFT_eSPI();
 
 // TTP229 Serial Pins
 #define TTP_SDO 1
 #define TTP_SCL 2
+
+// SD module wiring: CS=35, MOSI=36, MISO=37, SCK=38.
+#define SD_CS   35
+#define SD_MOSI 36
+#define SD_MISO 37
+#define SD_SCK  38
+
+// TFT_eSPI is configured for HSPI; keep SD on the other hardware SPI bus.
+SPIClass sdSPI(FSPI);
+bool sdReady = false;
+uint32_t sdMusicFiles = 0;
+
+struct SdSong {
+  String path;
+  String title;
+  String artist;
+  uint32_t size;
+};
+
+const int MAX_SD_SONGS = 64;
+SdSong sdSongs[MAX_SD_SONGS];
+int sdSongCount = 0;
+
+void showSplash();
+void updateMaxItems();
+void drawScreen();
+void printControls();
+uint16_t readTTP229();
+void addToHistory(uint16_t touch);
+void clearHistory();
+void handleMenu();
+void handleSelect();
+void navigateUp();
+void navigateDown();
+void togglePlayPause();
+void previousTrack();
+void nextTrack();
+void volumeDown();
+void volumeUp();
+void brightnessDown();
+void brightnessUp();
+void drawHome();
+void drawLibrary();
+void drawPlaylists();
+void drawNowPlaying();
+void drawSettings();
+void drawHeader(const char* title);
+void drawStatusBar();
+void showVolumeOverlay();
+void showBrightnessOverlay();
 
 // Colors
 #define BLACK 0x0000
@@ -45,6 +98,12 @@ enum GestureType {
   GESTURE_PINCH_OUT
 };
 
+GestureType detectGesture(unsigned long duration);
+GestureType detectCircular(int* keys, int count);
+GestureType detectPinch(int* keys, int count);
+GestureType detectSwipe(int firstKey, int lastKey, int* keys, int count);
+void handleGesture(GestureType gesture);
+
 // UI State
 enum Screen { HOME, LIBRARY, NOW_PLAYING, PLAYLISTS, SETTINGS, ARTISTS, ALBUMS };
 Screen currentScreen = HOME;
@@ -66,18 +125,81 @@ int touchCount = 0;
 bool longPressTriggered = false;
 int initialTouchKey = 0;
 
-// Sample data
+// UI labels
 const char* menuItems[] = {"Music Library", "Now Playing", "Playlists", "Artists", "Settings"};
-const char* songs[] = {
-  "Bohemian Rhapsody", "Stairway to Heaven", "Hotel California", 
-  "Imagine", "Sweet Child O' Mine", "Billie Jean", "Smells Like Teen Spirit",
-  "Hey Jude", "Purple Rain", "Wonderwall", "Lose Yourself", "Thriller"
-};
-const char* artists[] = {
-  "Queen", "Led Zeppelin", "Eagles", "John Lennon", "Guns N' Roses", 
-  "Michael Jackson", "Nirvana", "The Beatles", "Prince", "Oasis", "Eminem", "Michael Jackson"
-};
 const char* playlists[] = {"Favorites", "Rock Classics", "Chill Vibes", "Workout Mix", "Road Trip"};
+
+bool isMusicFile(const String& name) {
+  String lower = name;
+  lower.toLowerCase();
+  return lower.endsWith(".mp3") || lower.endsWith(".wav") ||
+         lower.endsWith(".flac") || lower.endsWith(".m4a");
+}
+
+void scanSdDirectory(File dir, const String& path) {
+  while (true) {
+    File entry = dir.openNextFile();
+    if (!entry) break;
+
+    String name = entry.name();
+    if (entry.isDirectory()) {
+      scanSdDirectory(entry, path + "/" + name);
+    } else if (isMusicFile(name)) {
+      sdMusicFiles++;
+      if (sdSongCount < MAX_SD_SONGS) {
+        SdSong& song = sdSongs[sdSongCount++];
+        song.path = path + "/" + name;
+        song.size = entry.size();
+        String basename = name;
+        int dot = basename.lastIndexOf('.');
+        if (dot > 0) basename = basename.substring(0, dot);
+        int dash = basename.indexOf(" - ");
+        if (dash > 0) {
+          song.artist = basename.substring(0, dash);
+          song.title = basename.substring(dash + 3);
+        } else {
+          song.artist = "Unknown";
+          song.title = basename;
+        }
+        Serial.printf("   🎵 %s\n", song.path.c_str());
+      }
+    }
+    entry.close();
+  }
+}
+
+bool initSdCard() {
+  Serial.print("💾 SD Card... ");
+  pinMode(SD_CS, OUTPUT);
+  digitalWrite(SD_CS, HIGH);
+  sdSPI.begin(SD_SCK, SD_MISO, SD_MOSI, SD_CS);
+
+  if (!SD.begin(SD_CS, sdSPI, 4000000)) {
+    SD.end();
+    if (!SD.begin(SD_CS, sdSPI, 400000)) {
+      Serial.println("❌ FAILED");
+      return false;
+    }
+  }
+
+  uint8_t type = SD.cardType();
+  if (type == CARD_NONE) {
+    Serial.println("❌ NO CARD");
+    SD.end();
+    return false;
+  }
+
+  sdReady = true;
+  sdSongCount = 0;
+  sdMusicFiles = 0;
+  Serial.printf("✅ %llu MB\n", SD.cardSize() / (1024ULL * 1024));
+  Serial.println("📂 Music files:");
+  File root = SD.open("/");
+  if (root) scanSdDirectory(root, "");
+  root.close();
+  Serial.printf("✅ Found %lu music files\n", (unsigned long)sdMusicFiles);
+  return true;
+}
 
 void setup() {
   Serial.begin(115200);
@@ -97,6 +219,8 @@ void setup() {
   tft.init();
   tft.setRotation(0);
   tft.fillScreen(BLACK);
+
+  initSdCard();
   
   showSplash();
   
@@ -417,10 +541,12 @@ void handleSelect() {
       break;
       
     case LIBRARY:
-      currentSong = selectedItem;
-      currentScreen = NOW_PLAYING;
-      isPlaying = true;
-      drawScreen();
+      if (sdSongCount > 0) {
+        currentSong = selectedItem;
+        currentScreen = NOW_PLAYING;
+        isPlaying = true;
+        drawScreen();
+      }
       break;
       
     case PLAYLISTS:
@@ -435,6 +561,7 @@ void handleSelect() {
 }
 
 void navigateUp() {
+  if (maxItems <= 0) return;
   selectedItem--;
   if (selectedItem < 0) selectedItem = maxItems - 1;
   
@@ -447,6 +574,7 @@ void navigateUp() {
 }
 
 void navigateDown() {
+  if (maxItems <= 0) return;
   selectedItem++;
   if (selectedItem >= maxItems) selectedItem = 0;
   
@@ -468,7 +596,8 @@ void togglePlayPause() {
 
 void previousTrack() {
   if (currentScreen == NOW_PLAYING) {
-    currentSong = (currentSong - 1 + 12) % 12;
+    if (sdSongCount == 0) return;
+    currentSong = (currentSong - 1 + sdSongCount) % sdSongCount;
     Serial.println("⏮️ Previous track");
     drawScreen();
   }
@@ -476,7 +605,8 @@ void previousTrack() {
 
 void nextTrack() {
   if (currentScreen == NOW_PLAYING) {
-    currentSong = (currentSong + 1) % 12;
+    if (sdSongCount == 0) return;
+    currentSong = (currentSong + 1) % sdSongCount;
     Serial.println("⏭️ Next track");
     drawScreen();
   }
@@ -523,7 +653,7 @@ void brightnessUp() {
 void updateMaxItems() {
   switch (currentScreen) {
     case HOME: maxItems = 5; break;
-    case LIBRARY: maxItems = 12; break;
+    case LIBRARY: maxItems = sdSongCount; break;
     case PLAYLISTS: maxItems = 5; break;
     case ARTISTS: maxItems = 12; break;
     case NOW_PLAYING: maxItems = 1; break;
@@ -602,7 +732,17 @@ void drawLibrary() {
   
   int visibleItems = 6;
   int startIdx = scrollOffset;
-  int endIdx = min(startIdx + visibleItems, 12);
+  if (sdSongCount == 0) {
+    tft.setTextColor(RED);
+    tft.setTextSize(1);
+    tft.setCursor(20, 110);
+    tft.print("No music files found");
+    tft.setTextColor(YELLOW);
+    tft.setCursor(20, 130);
+    tft.print("Add MP3/WAV files to SD");
+    return;
+  }
+  int endIdx = min(startIdx + visibleItems, sdSongCount);
   
   for (int i = startIdx; i < endIdx; i++) {
     int y = 80 + ((i - startIdx) * 30);
@@ -614,11 +754,11 @@ void drawLibrary() {
     tft.setTextSize(1);
     tft.setTextColor(WHITE);
     tft.setCursor(10, y);
-    tft.print(songs[i]);
+    tft.print(sdSongs[i].title);
     
     tft.setTextColor(GRAY);
     tft.setCursor(10, y + 12);
-    tft.print(artists[i]);
+    tft.print(sdSongs[i].artist);
     
     if (i == currentSong && isPlaying) {
       tft.setTextColor(GREEN);
@@ -658,6 +798,14 @@ void drawPlaylists() {
 
 void drawNowPlaying() {
   drawHeader("Now Playing");
+
+  if (sdSongCount == 0) {
+    tft.setTextColor(RED);
+    tft.setTextSize(1);
+    tft.setCursor(35, 130);
+    tft.print("No SD music files");
+    return;
+  }
   
   // Album art placeholder
   tft.drawRoundRect(60, 80, 120, 120, 10, WHITE);
@@ -672,11 +820,11 @@ void drawNowPlaying() {
   tft.setTextSize(1);
   tft.setTextColor(WHITE);
   tft.setCursor(20, 210);
-  tft.print(songs[currentSong]);
+  tft.print(sdSongs[currentSong].title);
   
   tft.setTextColor(GRAY);
   tft.setCursor(20, 225);
-  tft.print(artists[currentSong]);
+  tft.print(sdSongs[currentSong].artist);
   
   // Play/Pause status
   tft.setTextSize(2);
@@ -738,7 +886,7 @@ void drawStatusBar() {
   tft.setTextSize(1);
   tft.setTextColor(GRAY);
   tft.setCursor(10, 308);
-  tft.print("Swipe:Nav Circle:Vol");
+  tft.print(sdReady ? "SD:OK  Swipe:Nav" : "SD:ERR Swipe:Nav");
 }
 
 void showVolumeOverlay() {
