@@ -1,0 +1,141 @@
+** Drc report for ipod.kicad_pcb **
+** Created on 2026-07-30T14:52:18 **
+** Report includes: Errors, Warnings **
+
+** Found 13 DRC violations **
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(116.1250 mm, 115.1850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(116.1250 mm, 116.5850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(116.8250 mm, 114.4850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(116.8250 mm, 115.8850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(116.8250 mm, 117.2850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(117.5250 mm, 115.1850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(117.5250 mm, 116.5850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(118.2250 mm, 114.4850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(118.2250 mm, 115.8850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(118.2250 mm, 117.2850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(118.9250 mm, 115.1850 mm): PTH pad 41 [GND] of U1
+[drill_out_of_range]: Hole size out of range (board setup constraints min hole 0.3000 mm; actual 0.2000 mm)
+    Rule: board setup constraints; error
+    @(118.9250 mm, 116.5850 mm): PTH pad 41 [GND] of U1
+[invalid_outline]: Board has malformed outline (no edges found on Edge.Cuts layer)
+    Local override; error
+    @(0.0000 mm, 0.0000 mm): PCB
+
+** Found 21 unconnected pads **
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(127.7750 mm, 110.7050 mm): Pad 38 [Net-(J1-Pin_4)] of U1 on F.Cu
+    @(153.4450 mm, 88.8750 mm): PTH pad 4 [Net-(J1-Pin_4)] of J1
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(127.7750 mm, 109.4350 mm): Pad 39 [Net-(J1-Pin_3)] of U1 on F.Cu
+    @(150.9050 mm, 88.8750 mm): PTH pad 3 [Net-(J1-Pin_3)] of J1
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(110.2750 mm, 117.0550 mm): Pad 8 [Net-(U1-IO15)] of U1 on F.Cu
+    @(151.1625 mm, 97.5500 mm): Pad 15 [Net-(U1-IO15)] of U3 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(97.0600 mm, 59.2450 mm): PTH pad 3 [Net-(U1-IO10)] of U2
+    @(115.8500 mm, 125.9250 mm): Pad 18 [Net-(U1-IO10)] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(120.9300 mm, 125.9250 mm): Pad 22 [Net-(U1-IO14)] of U1 on F.Cu
+    @(151.1625 mm, 98.8500 mm): Pad 13 [Net-(U1-IO14)] of U3 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(110.2750 mm, 118.3250 mm): Pad 9 [Net-(U1-IO16)] of U1 on F.Cu
+    @(151.1625 mm, 98.2000 mm): Pad 14 [Net-(U1-IO16)] of U3 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(97.0600 mm, 74.4850 mm): PTH pad 9 [Net-(U1-IO13)] of U2
+    @(119.6600 mm, 125.9250 mm): Pad 21 [Net-(U1-IO13)] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(97.0600 mm, 61.7850 mm): PTH pad 4 [Net-(U1-IO8)] of U2
+    @(110.2750 mm, 122.1350 mm): Pad 12 [Net-(U1-IO8)] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(97.0600 mm, 64.3250 mm): PTH pad 5 [Net-(U1-IO9)] of U2
+    @(114.5800 mm, 125.9250 mm): Pad 17 [Net-(U1-IO9)] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(97.0600 mm, 66.8650 mm): PTH pad 6 [Net-(U1-IO11)] of U2
+    @(117.1200 mm, 125.9250 mm): Pad 19 [Net-(U1-IO11)] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(97.0600 mm, 69.4050 mm): PTH pad 7 [Net-(U1-IO12)] of U2
+    @(118.3900 mm, 125.9250 mm): Pad 20 [Net-(U1-IO12)] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(97.0600 mm, 54.1650 mm): PTH pad 1 [+3V3] of U2
+    @(97.0600 mm, 71.9450 mm): PTH pad 8 [+3V3] of U2
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(97.0600 mm, 71.9450 mm): PTH pad 8 [+3V3] of U2
+    @(110.2750 mm, 109.4350 mm): Pad 2 [+3V3] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(145.8250 mm, 88.8750 mm): PTH pad 1 [+3V3] of J1
+    @(110.2750 mm, 109.4350 mm): Pad 2 [+3V3] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(151.1625 mm, 96.2500 mm): Pad 17 [+3V3] of U3 on F.Cu
+    @(145.8250 mm, 88.8750 mm): PTH pad 1 [+3V3] of J1
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(97.0600 mm, 56.7050 mm): PTH pad 2 [GND] of U2
+    @(110.2750 mm, 108.1650 mm): Pad 1 [GND] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(116.8250 mm, 114.4850 mm): PTH pad 41 [GND] of U1
+    @(110.2750 mm, 108.1650 mm): Pad 1 [GND] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(118.9250 mm, 115.1850 mm): PTH pad 41 [GND] of U1
+    @(127.7750 mm, 108.1650 mm): Pad 40 [GND] of U1 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(127.7750 mm, 108.1650 mm): Pad 40 [GND] of U1 on F.Cu
+    @(151.1625 mm, 99.5000 mm): Pad 12 [GND] of U3 on F.Cu
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(151.1625 mm, 96.9000 mm): Pad 16 [GND] of U3 on F.Cu
+    @(148.3650 mm, 88.8750 mm): PTH pad 2 [GND] of J1
+[unconnected_items]: Missing connection between items
+    Local override; error
+    @(151.1625 mm, 99.5000 mm): Pad 12 [GND] of U3 on F.Cu
+    @(151.1625 mm, 96.9000 mm): Pad 16 [GND] of U3 on F.Cu
+
+** Found 0 Footprint errors **
+
+** Ignored checks **
+    - Footprint has no courtyard defined
+    - Track endpoint not centered on via
+    - Tuning profile track geometries
+    - Footprint doesn't match symbol's footprint filters
+    - Footprint component type doesn't match footprint pads
+
+** End of Report **
